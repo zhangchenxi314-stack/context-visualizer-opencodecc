@@ -1,0 +1,38 @@
+{
+  "name": "opencode-context-visualizer",
+  "version": "0.3.0",
+  "description": "Visualize Claude Code & OpenCode sessions as an interactive storyline — cross-platform CLI, zero dependencies.",
+  "type": "commonjs",
+  "main": "cli.js",
+  "bin": {
+    "context-viz": "cli.js",
+    "opencode-export": "opencode-export.js",
+    "opencode-context-viz": "serve.js"
+  },
+  "scripts": {
+    "start": "node cli.js",
+    "cli": "node cli.js",
+    "scan": "node cli.js --scan",
+    "distill": "node --env-file=.env distill.js",
+    "export": "node opencode-export.js",
+    "audit": "node coverage-audit.js",
+    "test": "node --test opencode-export.test.js"
+  },
+  "keywords": [
+    "opencode",
+    "claude-code",
+    "llm",
+    "visualization",
+    "storyline",
+    "conversation",
+    "agents",
+    "provenance",
+    "cli",
+    "cross-platform"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {}
+}
