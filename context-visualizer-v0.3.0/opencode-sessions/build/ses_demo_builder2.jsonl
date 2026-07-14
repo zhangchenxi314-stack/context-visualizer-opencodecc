@@ -1,3 +1,0 @@
-{"type":"user","message":{"role":"user","content":"(重发上一条)"},"timestamp":"2024-03-05T12:38:00Z","_meta":{"sessionId":"ses_demo_builder2","agent":"build","subagentType":"build","projectPath":"/Users/demo/todo-app","turnIndex":1}}
-{"type":"user","message":{"role":"user","content":"想让手机和电脑同步,试着加一条云同步的线。"},"timestamp":"2024-03-05T12:40:00Z","_meta":{"sessionId":"ses_demo_builder2","agent":"build","subagentType":"build","projectPath":"/Users/demo/todo-app","turnIndex":2}}
-{"type":"user","message":{"role":"user","content":"云同步得先有后端,超出这次 MVP 范围,先记下以后做。"},"timestamp":"2024-03-05T13:20:00Z","_meta":{"sessionId":"ses_demo_builder2","agent":"build","subagentType":"build","projectPath":"/Users/demo/todo-app","turnIndex":3}}
