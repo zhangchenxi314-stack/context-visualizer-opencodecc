@@ -1,0 +1,26 @@
+{
+  "platforms": {
+    "claude": {
+      "enabled": true,
+      "projectsDir": ""
+    },
+    "opencode": {
+      "enabled": true,
+      "dbPath": ""
+    }
+  },
+  "llm": {
+    "baseUrl": "https://api.deepseek.com/v1",
+    "apiKey": "sk-852405c635214cdaa581c1da43f2a9b8",
+    "model": "deepseek-v4-pro",
+    "concurrency": 8,
+    "blockSize": 12,
+    "maxThreadsPerAgent": 7
+  },
+  "cli": {
+    "recentCount": 10,
+    "outputDir": ".",
+    "maxSubAgentDepth": 2,
+    "maxTotalSessions": 20
+  }
+}

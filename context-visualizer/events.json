@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "version": 1,
+    "project": "context-visualizer",
+    "generator": "distill.js (synthetic demo data)",
+    "model": "demo",
+    "title": "做一个待办 App · Storyline (示例)"
+  },
+  "agents": [
+    { "id": "planner", "name": "策划", "short": "策", "hue": "#8BA3FF", "role": "研究 · 规划" },
+    { "id": "builder", "name": "构建", "short": "构", "hue": "#E2B357", "role": "编码 · 验收" }
+  ],
+  "manifest": [
+    { "id": "a1b2c3d4", "agent": "planner", "folder": "demo-todo-app", "sourcePath": "" },
+    { "id": "e5f6a7b8", "agent": "builder", "folder": "demo-todo-app", "sourcePath": "" },
+    { "id": "c9d0e1f2", "agent": "builder", "folder": "demo-todo-app", "sourcePath": "" }
+  ],
+  "sessions": [
+    { "id": "a1b2c3d4", "agent": "planner", "file": "todo-planning.jsonl", "label": "需求规划" },
+    { "id": "e5f6a7b8", "agent": "builder", "file": "todo-build.jsonl", "label": "核心构建" },
+    { "id": "c9d0e1f2", "agent": "builder", "file": "todo-build.jsonl", "label": "云同步尝试" }
+  ],
+  "threadDefs": [
+    { "id": "t-plan-main", "base": "plan", "name": "需求梳理", "color": "#8BA3FF", "agent": "planner", "parent": null, "glow": true },
+    { "id": "t-plan-research", "base": "plan", "name": "选型调研", "color": "#7C6FF0", "agent": "planner", "parent": "t-plan-main", "glow": false },
+    { "id": "t-build-core", "base": "build", "name": "核心功能", "color": "#E2B357", "agent": "builder", "parent": null, "glow": true },
+    { "id": "t-build-sync", "base": "build", "name": "云同步", "color": "#EC8FB0", "agent": "builder", "parent": null, "glow": false }
+  ],
+  "typeDefs": {
+    "question":  { "glyph": "?", "name": "提问" },
+    "finding":   { "glyph": "•", "name": "发现" },
+    "artifact":  { "glyph": "▤", "name": "产出" },
+    "decision":  { "glyph": "◆", "name": "决策" },
+    "pivot":     { "glyph": "↗", "name": "转向" },
+    "abandon":   { "glyph": "×", "name": "废弃" },
+    "interrupt": { "glyph": "!", "name": "打断" },
+    "verify":    { "glyph": "✓", "name": "验收" },
+    "handoff":   { "glyph": "⇄", "name": "交接" }
+  },
+  "coverage": {
+    "sessions": {
+      "a1b2c3d4": {
+        "turns": 9, "extracted": 6, "merged": 1, "skipped": 2,
+        "ledger": [
+          { "line": 1, "ts": "2024-03-05T09:00:00Z", "status": "skipped", "reason": "empty", "snip": "(空消息)" },
+          { "line": 12, "ts": "2024-03-05T09:31:00Z", "status": "skipped", "reason": "terse-ack", "snip": "好的,继续" }
+        ]
+      },
+      "e5f6a7b8": {
+        "turns": 6, "extracted": 4, "merged": 1, "skipped": 1,
+        "ledger": [
+          { "line": 9, "ts": "2024-03-05T11:22:00Z", "status": "skipped", "reason": "task-notif", "snip": "[系统] 构建完成通知" }
+        ]
+      },
+      "c9d0e1f2": {
+        "turns": 3, "extracted": 2, "merged": 0, "skipped": 1,
+        "ledger": [
+          { "line": 2, "ts": "2024-03-05T12:38:00Z", "status": "skipped", "reason": "re-send", "snip": "(重发上一条)" }
+        ]
+      }
+    },
+    "totals": { "turns": 18, "extracted": 12, "merged": 2, "skipped": 4, "genuineUncovered": 0 },
+    "note": "合成示例数据 —— 每条 turn 都有留账,审计门禁 ❌=0。"
+  },
+  "events": [
+    { "id": "a1b2c3d4-3",  "agent": "planner", "session": "a1b2c3d4", "line": 3,  "ts": "2024-03-05T09:02:00Z", "type": "question", "thread": "t-plan-main",     "title": "起步", "summary": "要做一个跨设备的待办 App,先把核心需求理清楚",       "excerpt": "我想做个待办 App:能加任务、打勾完成、分清今天/以后,最好手机电脑都能用。" },
+    { "id": "a1b2c3d4-8",  "agent": "planner", "session": "a1b2c3d4", "line": 8,  "ts": "2024-03-05T09:20:00Z", "type": "finding",  "thread": "t-plan-main",     "title": "范围", "summary": "MVP 只做增删改、完成状态、按日期分组;登录协作留后面",     "excerpt": "先别贪多,MVP 就四件事:加任务、删任务、打勾、按日期分组。" },
+    { "id": "a1b2c3d4-15", "agent": "planner", "session": "a1b2c3d4", "line": 15, "ts": "2024-03-05T09:48:00Z", "type": "decision", "thread": "t-plan-main",     "title": "选栈", "summary": "定为本地优先的单页应用,数据先存在浏览器里",         "excerpt": "决定:纯前端单页 + localStorage 起步,先不急着上后端。" },
+    { "id": "a1b2c3d4-22", "agent": "planner", "session": "a1b2c3d4", "line": 22, "ts": "2024-03-05T10:10:00Z", "type": "pivot",    "thread": "t-plan-research", "title": "调研", "summary": "另开一条线,比较几种前端框架的体积和上手成本",         "excerpt": "顺手调研一下:原生 vs 轻框架,先看包体积和心智负担。" },
+    { "id": "a1b2c3d4-31", "agent": "planner", "session": "a1b2c3d4", "line": 31, "ts": "2024-03-05T10:35:00Z", "type": "abandon",  "thread": "t-plan-research", "title": "搁置", "summary": "框架对比先搁置:MVP 用原生就够,避免过度设计",         "excerpt": "对比做到一半发现,MVP 用原生足够,框架这条线先搁置。" },
+    { "id": "a1b2c3d4-38", "agent": "planner", "session": "a1b2c3d4", "line": 38, "ts": "2024-03-05T10:52:00Z", "type": "handoff",  "thread": "t-plan-main",     "title": "交接", "summary": "需求与选型定稿,交给构建 agent 开始实现",             "excerpt": "需求和选型都定了,交给构建那边开始写代码。", "handoff_to": "e5f6a7b8" },
+    { "id": "e5f6a7b8-4",  "agent": "builder", "session": "e5f6a7b8", "line": 4,  "ts": "2024-03-05T11:05:00Z", "type": "artifact", "thread": "t-build-core",    "title": "骨架", "summary": "搭出页面骨架:输入框 + 任务列表 + 空状态提示",         "excerpt": "先把页面骨架搭好:一个输入框、一个列表、一个空状态。" },
+    { "id": "e5f6a7b8-12", "agent": "builder", "session": "e5f6a7b8", "line": 12, "ts": "2024-03-05T11:40:00Z", "type": "finding",  "thread": "t-build-core",    "title": "存储", "summary": "接上 localStorage,刷新后任务不再丢失",             "excerpt": "把任务存进 localStorage,刷新页面数据还在了。" },
+    { "id": "e5f6a7b8-19", "agent": "builder", "session": "e5f6a7b8", "line": 19, "ts": "2024-03-05T12:15:00Z", "type": "artifact", "thread": "t-build-core",    "title": "完成", "summary": "打勾完成 + 今天/以后分组,MVP 主流程跑通",           "excerpt": "打勾划线、按日期分两组都好了,MVP 主流程通了。" },
+    { "id": "c9d0e1f2-5",  "agent": "builder", "session": "c9d0e1f2", "line": 5,  "ts": "2024-03-05T12:40:00Z", "type": "pivot",    "thread": "t-build-sync",    "title": "云同步", "summary": "试着加一条云同步线,让手机和电脑数据一致",           "excerpt": "想让手机和电脑同步,试着加一条云同步的线。" },
+    { "id": "c9d0e1f2-14", "agent": "builder", "session": "c9d0e1f2", "line": 14, "ts": "2024-03-05T13:20:00Z", "type": "abandon",  "thread": "t-build-sync",    "title": "缓一缓", "summary": "云同步依赖后端,超出本次 MVP,标记以后再做",         "excerpt": "云同步得先有后端,超出这次 MVP 范围,先记下以后做。" },
+    { "id": "e5f6a7b8-26", "agent": "builder", "session": "e5f6a7b8", "line": 26, "ts": "2024-03-05T13:35:00Z", "type": "verify",   "thread": "t-build-core",    "title": "验收", "summary": "过验收清单:增删改查 + 分组 + 持久化全部 OK",         "excerpt": "验收:加/删/改/打勾/分组/刷新不丢,全部通过。" }
+  ]
+}
