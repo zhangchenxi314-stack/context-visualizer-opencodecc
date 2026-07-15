@@ -1,5 +1,0 @@
-{
-  "_comment": "OPTIONAL friendly display names. Maps a ~/.claude/projects/<folder> key to a nicer agent name/hue/role shown in the storyline. Delete this file and any conversation still renders with generic, auto-derived names. The entries below are just examples for the bundled demo.",
-  "_title": "做一个待办 App · Storyline",
-  "demo-todo-app": { "name": "Planner", "hue": "#8BA3FF", "role": "研究 · 规划", "order": 0 }
-}
