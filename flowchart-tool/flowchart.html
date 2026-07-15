@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Session Flowchart</title>
+<style>
+/* ============================================================
+   AI 会话流程图 — 垂直卡片 + 箭头
+   单文件 · 零依赖 · 内联数据 (window.__FLOWCHART_DATA__)
+   深色主题, 匹配 conversation-storyline 项目风格
+   ============================================================ */
+:root {
+  --bg: #0e1117; --bg-2: #141925; --card: #161b27;
+  --ink: #e7ecf4; --ink-soft: #9aa6ba; --ink-faint: #6b778c;
+  --line: #222a39; --line-soft: #1b2230;
+  --accent: #7c8bff; --accent-soft: #7c8bff33;
+  --shadow: 0 1px 2px #0006, 0 10px 30px #0007;
+  --ok: #34d399;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: auto;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- scrollbar ---- */
+body::-webkit-scrollbar { width: 8px; }
+body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+body::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); }
+body { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+
+/* ---- main container ---- */
+#root {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+/* ---- session info card ---- */
+.session-info {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+
+.session-info .si-title {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.session-info .si-title .si-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 12px var(--ok);
+  flex-shrink: 0;
+}
+
+.session-info .si-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  margin-top: 8px;
+}
+
+.session-info .si-meta b {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.session-info .si-stat {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.session-info .si-stat b {
+  color: var(--ink);
+}
+
+/* ---- toolbar ---- */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+#search {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink);
+  font: 13px inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#search:focus {
+  border-color: var(--accent);
+}
+
+#search::placeholder {
+  color: var(--ink-faint);
+}
+
+.btn {
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  border-radius: 9px;
+  padding: 8px 14px;
+  font: 600 12px inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.btn:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
+.counter {
+  color: var(--ink-faint);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.counter b {
+  color: var(--ink-soft);
+}
+
+/* ---- flowchart container ---- */
+.flowchart {
+  /* no extra wrapper needed */;
+}
+
+/* ---- arrow between nodes ---- */
+.arrow {
+  text-align: center;
+  padding: 2px 0;
+  color: var(--line);
+  font-size: 22px;
+  user-select: none;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* ---- node card ---- */
+.node {
+  border-radius: 10px;
+  margin: 8px 0;
+  border: 1px solid;
+  overflow: hidden;
+  box-shadow: 0 1px 3px #0004;
+  transition: opacity 0.2s, box-shadow 0.2s;
+}
+
+.node.highlight {
+  box-shadow: 0 0 0 2px var(--accent), 0 4px 20px var(--accent-soft);
+}
+
+.node.dimmed {
+  opacity: 0.25;
+}
+
+.node-header {
+  padding: 9px 16px;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 38px;
+}
+
+.node-header .nh-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.node-header .nh-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.node-timestamp {
+  flex-shrink: 0;
+  font-family: 'SF Mono', 'Consolas', 'Liberation Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.agent-tag {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.13);
+  white-space: nowrap;
+}
+
+/* ---- node type colors ---- */
+.node.user { border-color: rgba(74, 158, 255, 0.4); }
+.node.user .node-header { background: #4a9eff; color: #fff; }
+.node.user .node-body { background: #1a2a4e; }
+
+.node.reasoning { border-color: rgba(176, 124, 255, 0.4); }
+.node.reasoning .node-header { background: #b07cff; color: #fff; }
+.node.reasoning .node-body { background: #2a1a4e; }
+
+.node.tool { border-color: rgba(255, 154, 74, 0.4); }
+.node.tool .node-header { background: #ff9a4a; color: #fff; }
+.node.tool .node-body { background: #4e2a1a; }
+
+.node.response { border-color: rgba(74, 239, 154, 0.4); }
+.node.response .node-header { background: #4aef9a; color: #0e1117; }
+.node.response .node-body { background: #1a4e2e; }
+
+/* ---- node body ---- */
+.node-body {
+  padding: 14px 18px;
+  font-size: 13.5px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-word;
+  position: relative;
+}
+
+.node-body.collapsible {
+  max-height: 120px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.node-body.collapsible::after {
+  content: "▼ 点击展开";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 28px 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.55);
+  background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.45) 60%);
+  pointer-events: none;
+}
+
+.node-body.collapsible.expanded {
+  max-height: none;
+  cursor: auto;
+}
+
+.node-body.collapsible.expanded::after {
+  content: "▲ 点击收起";
+  position: static;
+  display: block;
+  background: none;
+  color: rgba(255,255,255,0.35);
+  padding: 8px 0 0;
+  font-size: 11px;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* ---- node input (tool params) ---- */
+.node-input {
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.node-input-header {
+  padding: 8px 18px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  color: rgba(255,255,255,0.5);
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.node-input-header:hover {
+  color: rgba(255,255,255,0.8);
+}
+
+.node-input-header .caret {
+  display: inline-block;
+  transition: transform 0.25s;
+  font-size: 9px;
+}
+
+.node-input .detail-text {
+  padding: 0 18px 14px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  font-family: 'SF Mono', 'Consolas', 'Liberation Mono', monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.node-input pre {
+  display: none;
+  margin: 0 18px 12px;
+  padding: 12px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.75);
+}
+
+.node-input:not(.collapsed) pre {
+  display: block;
+}
+
+.node-input:not(.collapsed) .caret {
+  transform: rotate(90deg);
+}
+
+.node-input.collapsed .detail-text {
+  display: block;
+}
+
+.node-input:not(.collapsed) .detail-text {
+  display: none;
+}
+
+/* ---- code/pre inside node bodies ---- */
+.node-body pre {
+  background: rgba(0,0,0,0.25);
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 8px 0;
+}
+
+.node-body code {
+  font-family: 'SF Mono', 'Consolas', 'Liberation Mono', monospace;
+  font-size: 0.92em;
+}
+
+/* ---- responsive ---- */
+@media (max-width: 640px) {
+  #root { padding: 16px 10px 60px; }
+  .session-info { padding: 14px 16px; }
+  .session-info .si-title { font-size: 15px; }
+  .node-header { padding: 7px 12px; font-size: 12px; }
+  .node-body { padding: 10px 14px; font-size: 12.5px; }
+  .toolbar { gap: 6px; }
+  .btn { padding: 6px 10px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+"use strict";
+
+window.__FLOWCHART_DATA__ = {
+  session: {
+    id: "ses_abc123",
+    title: "示例会话 — AI Flowchart",
+    agent: "Sisyphus · ultraworker",
+    model: "claude-sonnet-4-20250514",
+    directory: "/Users/zcx/Public/context-visualizer",
+    time: "2026-07-15 14:30:00",
+    cost: "$0.024",
+    tokens: 15420
+  },
+  nodes: [
+    {
+      type: "user",
+      ts: 1752637800000,
+      title: "用户",
+      content: "帮我分析 context-visualizer 项目的代码结构，然后写一个流程图渲染器",
+      agent: null
+    },
+    {
+      type: "reasoning",
+      ts: 1752637801000,
+      title: "AI推理",
+      content: "用户想要理解项目结构并创建一个新的流程图渲染器。首先需要了解现有项目结构，包括 index.html 中的 storyline 可视化、distill-core.js 蒸馏管线、cli.js CLI 工具等。然后基于这些理解设计一个垂直卡片式流程图。",
+      agent: "Sisyphus · ultraworker"
+    },
+    {
+      type: "tool",
+      ts: 1752637802000,
+      title: "Read /Users/zcx/Public/context-visualizer/index.html",
+      content: "Content of index.html (24,580 chars)\n\n该文件包含一个基于 SVG 的故事线可视化器(Sisyphus · ultraworker)。使用 events.json 作为数据源，包含 agent 分组背景带、线程丝带、里程碑标记、NOW 标记等。核心渲染使用 Catmull-Rom 样条曲线采样生成丝带路径。",
+      agent: "Sisyphus · ultraworker",
+      toolName: "read",
+      input: "{\"filePath\": \"/Users/zcx/Public/context-visualizer/index.html\"}",
+      detail: "filePath: /Users/zcx/Public/context-visualizer/index.html"
+    },
+    {
+      type: "tool",
+      ts: 1752637803000,
+      title: "Read /Users/zcx/Public/context-visualizer/cli.js",
+      content: "Content of cli.js (1,860 chars)\n\nCLI 入口，基于 commander.js。提供 scan/distill/open 三个子命令。数据流：raw transcript → scanner(normalizer) → distill(模型蒸馏) → events.json → storyline 渲染。",
+      agent: "Sisyphus · ultraworker",
+      toolName: "read",
+      input: "{\"filePath\": \"/Users/zcx/Public/context-visualizer/cli.js\"}",
+      detail: "filePath: /Users/zcx/Public/context-visualizer/cli.js"
+    },
+    {
+      type: "reasoning",
+      ts: 1752637804000,
+      title: "AI推理",
+      content: "已读取项目核心文件。现在需要设计 flowchart.html：垂直卡片布局、按节点类型着色、collapsible 长内容、搜索、session info 顶栏。颜色方案参考现有项目的 dark theme (#0e1117 bg, CSS variables)。设计 4 种节点类型: user(蓝), reasoning(紫), tool(橙), response(绿)。每个卡片包含 header + body + 可选 tool input 参数区域。",
+      agent: "Sisyphus · ultraworker"
+    },
+    {
+      type: "response",
+      ts: 1752637805000,
+      title: "AI回复",
+      content: "已完成 flowchart.html 的设计和实现。文件位于 /Users/zcx/Public/context-visualizer/flowchart.html。\n\n主要特性:\n- 垂直卡片流，每张卡片按节点类型着色\n- 长内容自动折叠，点击展开/收起\n- Tool 节点的参数详情可折叠\n- 顶部 Session Info 卡片\n- 搜索过滤 + 展开/收起全部按钮\n- 完全自包含，零外部依赖\n- 深色主题，与项目风格一致",
+      agent: "Sisyphus · ultraworker"
+    }
+  ]
+};
+
+(function render() {
+  var data = window.__FLOWCHART_DATA__ || { session: {}, nodes: [] };
+  var session = data.session || {};
+  var nodes = data.nodes || [];
+  var root = document.getElementById('root');
+
+  var html = '';
+
+  // ---- Session info ----
+  var title = escHtml(session.title || 'Untitled Session');
+  var agent = escHtml(session.agent || '');
+  var model = escHtml(session.model || '');
+  var directory = escHtml(session.directory || '');
+  var time = escHtml(session.time || '');
+  var cost = session.cost != null ? escHtml(String(session.cost)) : '';
+  var tokens = session.tokens != null ? formatNum(session.tokens) : '';
+
+  html += '<div class="session-info">';
+  html += '<div class="si-title"><span class="si-dot"></span>' + title + '</div>';
+  html += '<div class="si-meta">';
+  if (agent) html += '<span>Agent: <b>' + agent + '</b></span>';
+  if (model) html += '<span>Model: <b>' + model + '</b></span>';
+  if (tokens) html += '<span>Tokens: <b>' + tokens + '</b></span>';
+  if (cost) html += '<span>Cost: <b>' + cost + '</b></span>';
+  if (time) html += '<span>Time: <b>' + time + '</b></span>';
+  if (directory) html += '<span style="font-family:monospace;font-size:11px;color:var(--ink-faint)">' + directory + '</span>';
+  html += '</div>';
+
+  var totalNodes = nodes.length;
+  var timeSpan = '';
+  if (nodes.length > 0) {
+    var timestamps = nodes.map(function(n) { return n.ts; }).filter(function(t) { return t != null; });
+    if (timestamps.length > 0) {
+      var tMin = new Date(Math.min.apply(null, timestamps));
+      var tMax = new Date(Math.max.apply(null, timestamps));
+      timeSpan = ' · ' + fmtDate(tMin) + ' → ' + fmtDate(tMax);
+    }
+  }
+  html += '<div class="si-meta" style="margin-top:6px;padding-top:8px;border-top:1px solid var(--line)">';
+  html += '<span class="si-stat">节点: <b>' + totalNodes + '</b></span>';
+  if (timeSpan) html += '<span class="si-stat">时间' + timeSpan + '</span>';
+  html += '</div>';
+  html += '</div>';
+
+  // ---- Toolbar ----
+  html += '<div class="toolbar">';
+  html += '<input id="search" type="text" placeholder="搜索节点内容…">';
+  html += '<span class="counter" id="counter">节点 <b>0</b> / 共 <b>' + totalNodes + '</b></span>';
+  html += '<button class="btn" id="btnExpandAll">全部展开</button>';
+  html += '<button class="btn" id="btnCollapseAll">全部收起</button>';
+  html += '</div>';
+
+  // ---- Flowchart ----
+  html += '<div class="flowchart" id="flow">';
+
+  for (var i = 0; i < nodes.length; i++) {
+    var n = nodes[i] || {};
+    if (i > 0) html += '<div class="arrow">&#8595;</div>';
+    html += nodeHtml(n, i, nodes);
+  }
+
+  html += '</div>';
+
+  root.innerHTML = html;
+
+  // ---- Collapse/expand: node body ----
+  var bodyEls = document.querySelectorAll('.node-body.collapsible');
+  for (var b = 0; b < bodyEls.length; b++) {
+    bodyEls[b].addEventListener('click', function(e) {
+      if (e.target.closest('.node-input')) return;
+      this.classList.toggle('expanded');
+    });
+  }
+
+  // ---- Collapse/expand: node input params ----
+  var inputHeaders = document.querySelectorAll('.node-input-header');
+  for (var h = 0; h < inputHeaders.length; h++) {
+    inputHeaders[h].addEventListener('click', function(e) {
+      e.stopPropagation();
+      this.parentElement.classList.toggle('collapsed');
+    });
+  }
+
+  // ---- Expand all / Collapse all ----
+  document.getElementById('btnExpandAll').addEventListener('click', function() {
+    var bodies = document.querySelectorAll('.node-body.collapsible');
+    for (var i = 0; i < bodies.length; i++) { bodies[i].classList.add('expanded'); }
+    var inputs = document.querySelectorAll('.node-input');
+    for (var j = 0; j < inputs.length; j++) { inputs[j].classList.remove('collapsed'); }
+  });
+
+  document.getElementById('btnCollapseAll').addEventListener('click', function() {
+    var bodies = document.querySelectorAll('.node-body.collapsible');
+    for (var i = 0; i < bodies.length; i++) { bodies[i].classList.remove('expanded'); }
+    var inputs = document.querySelectorAll('.node-input');
+    for (var j = 0; j < inputs.length; j++) { inputs[j].classList.add('collapsed'); }
+  });
+
+  // ---- Search ----
+  var searchEl = document.getElementById('search');
+  var counterEl = document.getElementById('counter');
+
+  searchEl.addEventListener('input', function() {
+    var q = this.value.trim().toLowerCase();
+    var visible = 0;
+    var nodeEls = document.querySelectorAll('.node');
+    var arrowEls = document.querySelectorAll('.arrow');
+
+    nodeEls.forEach(function(el) {
+      var text = el.textContent.toLowerCase();
+      if (!q || text.indexOf(q) !== -1) {
+        el.style.display = '';
+        el.classList.remove('dimmed');
+        visible++;
+      } else {
+        el.style.display = 'none';
+        el.classList.remove('dimmed');
+      }
+    });
+
+    // Hide arrows that are between hidden nodes
+    arrowEls.forEach(function(el, idx) {
+      var prev = nodeEls[idx];
+      var next = nodeEls[idx + 1];
+      if (!q) {
+        el.style.display = '';
+      } else {
+        var prevVisible = prev && prev.style.display !== 'none';
+        var nextVisible = next && next.style.display !== 'none';
+        el.style.display = (prevVisible && nextVisible) ? '' : 'none';
+      }
+    });
+
+    counterEl.innerHTML = '节点 <b>' + visible + '</b> / 共 <b>' + totalNodes + '</b>';
+  });
+
+  // ---- Keyboard shortcut: Ctrl+F focuses search ----
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+      e.preventDefault();
+      searchEl.focus();
+      searchEl.select();
+    }
+  });
+})();
+
+// ---- Helpers ----
+
+function nodeHtml(n, idx, allNodes) {
+  var colorMap = {
+    user:      { cls: 'user',      hdr: '#4a9eff' },
+    reasoning: { cls: 'reasoning', hdr: '#b07cff' },
+    tool:      { cls: 'tool',      hdr: '#ff9a4a' },
+    response:  { cls: 'response',  hdr: '#4aef9a' }
+  };
+  var col = colorMap[n.type] || colorMap.tool;
+  var agentName = escHtml(n.agent || '');
+  var title = escHtml(n.title || '');
+
+  var tsStr = '';
+  if (n.ts != null) {
+    tsStr = fmtDate(new Date(n.ts));
+  }
+
+  var content = n.content != null ? String(n.content) : '';
+  var isLong = content.length > 300;
+  var isTool = n.type === 'tool';
+  // Tool nodes always have collapsible body; long content nodes too
+  var bodyClass = (isTool || isLong) ? ' collapsible' : '';
+  // Tool nodes always start collapsed
+  if (isTool) bodyClass += ' collapsed-init';
+
+  // For collapsed body, show first 100 chars + ellipsis if long
+  var bodyContent = escHtml(content) || '<span style="opacity:0.4">(无内容)</span>';
+
+  // Determine agent tag: show only if there are multiple distinct agents across all nodes
+  var showAgentTag = hasMultipleAgents(allNodes) && agentName;
+
+  var h = '';
+  h += '<div class="node ' + col.cls + '" data-idx="' + idx + '">';
+
+  // Header
+  h += '<div class="node-header">';
+  h += '<span class="nh-left">';
+  h += '<span class="nh-title">' + title + '</span>';
+  if (showAgentTag) {
+    h += '<span class="agent-tag">' + agentName + '</span>';
+  }
+  h += '</span>';
+  h += '<span class="node-timestamp">' + tsStr + '</span>';
+  h += '</div>';
+
+  // Body
+  h += '<div class="node-body' + bodyClass + '">' + bodyContent + '</div>';
+
+  // Tool input params
+  if (isTool && n.input != null && n.input !== '') {
+    var inputStr = String(n.input);
+    var inputPretty = inputStr;
+    try {
+      inputPretty = JSON.stringify(JSON.parse(inputStr), null, 2);
+    } catch (e) { /* keep raw */ }
+
+    // Short detail line for collapsed state
+    var detailShort = n.detail || '';
+    // If no detail, generate one from input
+    if (!detailShort && inputStr) {
+      try {
+        var parsed = JSON.parse(inputStr);
+        var keys = Object.keys(parsed);
+        if (keys.length === 1) {
+          detailShort = keys[0] + ': ' + truncateStr(String(parsed[keys[0]]), 50);
+        } else {
+          detailShort = keys.slice(0, 3).join(', ') + (keys.length > 3 ? '…' : '');
+        }
+      } catch (e) {
+        detailShort = truncateStr(inputStr, 60);
+      }
+    }
+
+    h += '<div class="node-input collapsed">';
+    h += '<div class="node-input-header"><span class="caret">▶</span> 参数详情';
+    if (detailShort) h += ' — <span class="detail-text">' + escHtml(detailShort) + '</span>';
+    h += '</div>';
+    h += '<pre>' + escHtml(inputPretty) + '</pre>';
+    h += '</div>';
+  }
+
+  h += '</div>';
+  return h;
+}
+
+function escHtml(s) {
+  s = String(s || '');
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function truncateStr(s, max) {
+  s = String(s || '');
+  if (s.length <= max) return s;
+  return s.slice(0, max) + '…';
+}
+
+function fmtDate(d) {
+  if (!d || isNaN(d.getTime())) return '';
+  var pad = function(n) { return String(n).padStart(2, '0'); };
+  return pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()) + ' ' + pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes());
+}
+
+function formatNum(n) {
+  if (n == null) return '';
+  return Number(n).toLocaleString();
+}
+
+function hasMultipleAgents(nodesArr) {
+  var agents = {};
+  for (var i = 0; i < nodesArr.length; i++) {
+    var a = nodesArr[i].agent;
+    if (a) agents[a] = true;
+  }
+  var count = 0;
+  for (var k in agents) { if (agents.hasOwnProperty(k)) count++; }
+  return count > 1;
+}
+</script>
+</body>
+</html>
